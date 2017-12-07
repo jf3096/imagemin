@@ -27,11 +27,11 @@ const handleFile = (input, output, opts) => fsP.readFile(input).then(data => {
 		.then(buf => {
 			buf = buf.length < data.length ? buf : data;
 
-			const fileType = fileType(buf);
+			const type = fileType(buf);
 		
 			const ret = {
 				data: buf,
-				path: replacePath({fileType, replaceExt, dest}) || ((fileType && fileType.ext === 'webp') ? replaceExt(dest, '.webp') : dest)
+				path: replacePath({type, replaceExt, dest}) || ((type && type.ext === 'webp') ? replaceExt(dest, '.webp') : dest)
 			};
 
 			if (!dest) {
