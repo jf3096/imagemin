@@ -31,7 +31,7 @@ const handleFile = (input, output, opts) => fsP.readFile(input).then(data => {
 		
 			const ret = {
 				data: buf,
-				path: replacePath(fileType, replaceExt, dest) || ((fileType && fileType.ext === 'webp') ? replaceExt(dest, '.webp') : dest)
+				path: replacePath({fileType, replaceExt, dest}) || ((fileType && fileType.ext === 'webp') ? replaceExt(dest, '.webp') : dest)
 			};
 
 			if (!dest) {
