@@ -10,12 +10,16 @@ const replaceExt = require('replace-ext');
 
 const fsP = pify(fs);
 
+const noop = f => f;
+
 const handleFile = (input, output, opts) => fsP.readFile(input).then(data => {
 	const dest = output ? path.join(output, path.basename(input)) : null;
 
 	if (opts.plugins && !Array.isArray(opts.plugins)) {
 		throw new TypeError('The plugins option should be an `Array`');
 	}
+	
+	const {replacePath = noop} = opts;
 
 	const pipe = opts.plugins.length > 0 ? pPipe(opts.plugins)(data) : Promise.resolve(data);
 
@@ -23,9 +27,11 @@ const handleFile = (input, output, opts) => fsP.readFile(input).then(data => {
 		.then(buf => {
 			buf = buf.length < data.length ? buf : data;
 
+			const fileType = fileType(buf);
+		
 			const ret = {
 				data: buf,
-				path: (fileType(buf) && fileType(buf).ext === 'webp') ? replaceExt(dest, '.webp') : dest
+				path: replacePath(fileType) || ((fileType && fileType.ext === 'webp') ? replaceExt(dest, '.webp') : dest)
 			};
 
 			if (!dest) {
